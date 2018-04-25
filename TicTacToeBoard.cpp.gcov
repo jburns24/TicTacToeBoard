@@ -1,0 +1,199 @@
+        -:    0:Source:TicTacToeBoard.cpp
+        -:    0:Graph:TicTacToeBoard.gcno
+        -:    0:Data:TicTacToeBoard.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "TicTacToeBoard.h"
+        -:    2:#include <iostream>
+        -:    3:/**
+        -:    4: * Class for representing a 3x3 Tic-Tac-Toe game board, using the Piece enum
+        -:    5: * to represent the spaces on the board.
+        -:    6:**/
+        -:    7:
+        -:    8://Constructor sets an empty board and specifies it is X's turn first
+       23:    9:TicTacToeBoard::TicTacToeBoard()
+        -:   10:{
+       23:   11:  turn = X;
+       92:   12:  for(int i=0; i<BOARDSIZE; i++)
+      276:   13:    for(int j=0; j<BOARDSIZE; j++)
+      207:   14:      board[i][j] = Blank;
+       23:   15:}
+        -:   16:
+        -:   17:/**
+        -:   18: * Switches turn member variable to represent whether it's X's or O's turn
+        -:   19: * and returns whose turn it is
+        -:   20:**/
+       59:   21:Piece TicTacToeBoard::toggleTurn()
+        -:   22:{
+       59:   23:  if (this->turn == X)
+        -:   24:  {
+       33:   25:    this->turn = O;
+       33:   26:    return O;
+        -:   27:  }
+        -:   28:  else
+        -:   29:  {
+       26:   30:    this->turn = X;
+       26:   31:    return this->turn;
+        -:   32:  }
+        -:   33:}
+        -:   34:
+        -:   35:/**
+        -:   36: * Places the piece of the current turn on the board, returns what
+        -:   37: * piece is placed, and toggles which Piece's turn it is. placePiece does 
+        -:   38: * NOT allow to place a piece in a location where there is already a piece.
+        -:   39: * In that case, placePiece just returns what is already at that location. 
+        -:   40: * Out of bounds coordinates return the Piece Invalid value. When the game
+        -:   41: * is over, no more pieces can be placed so attempting to place a piece
+        -:   42: * should neither change the board nor change whose turn it is.
+        -:   43:**/ 
+       60:   44:Piece TicTacToeBoard::placePiece(int row, int column)
+        -:   45:{
+       60:   46:  Piece gameStatus = this->getWinner();
+       60:   47:  if (gameStatus == Invalid)
+        -:   48:  {
+       59:   49:   if (this->getPiece(row, column) != Invalid)
+        -:   50:    {
+       57:   51:      if (this->board[row - 1][column - 1] == Blank)
+        -:   52:      {
+       55:   53:        Piece currentPiece =this->turn;
+       55:   54:        this->board[row - 1][column - 1] = currentPiece;
+       55:   55:        this->toggleTurn();
+       55:   56:        return currentPiece;
+        -:   57:      }
+        -:   58:      else
+        -:   59:      {
+        2:   60:        return this->board[row - 1][column- 1];
+        -:   61:      }
+        -:   62:      
+        -:   63:    }
+        -:   64:    else
+        -:   65:    {
+        2:   66:      return Invalid;
+        -:   67:    } 
+        -:   68:  }
+        1:   69:  return Invalid;
+        -:   70:}
+        -:   71:
+        -:   72:/**
+        -:   73: * Returns what piece is at the provided coordinates, or Blank if there
+        -:   74: * are no pieces there, or Invalid if the coordinates are out of bounds
+        -:   75:**/
+       64:   76:Piece TicTacToeBoard::getPiece(int row, int column)
+        -:   77:{
+       64:   78:  if (row > 3 || column > 3) 
+        -:   79:  {
+        3:   80:    return Invalid;
+        -:   81:  }
+       61:   82:  if (row < 1 || column < 1)
+        -:   83:  {
+        3:   84:    return Invalid;
+        -:   85:  }
+        -:   86:  else
+        -:   87:  {
+       58:   88:    return (Piece)this->board[row - 1][column -1];
+        -:   89:  }
+        -:   90:  
+        -:   91:}
+        -:   92:
+        -:   93:/**
+        -:   94: * Returns which Piece has won, if there is a winner, Invalid if the game
+        -:   95: * is not over, or Blank if the board is filled and no one has won.
+        -:   96:**/
+       68:   97:Piece TicTacToeBoard::getWinner()
+        -:   98:{
+       68:   99:  bool x_wins = false;
+       68:  100:  bool o_wins = false;
+       68:  101:  Piece lastFound = Invalid;
+       68:  102:  bool foundBlanks = false;
+       68:  103:  std::string row = "";
+        -:  104:  // check for wins in rows
+      264:  105:  for (int i = 0; i < 3; i++)
+        -:  106:  {
+      796:  107:    for(int j = 0; j < 3; j++)
+        -:  108:    {
+      597:  109:      lastFound = this->board[i][j];
+      597:  110:      row += lastFound;
+      597:  111:      if (lastFound == Blank)
+      427:  112:        foundBlanks = true;
+        -:  113:    }
+      199:  114:    if (row == "XXX")
+        -:  115:    {
+        2:  116:      x_wins = true;
+        2:  117:      break;
+        -:  118:    }
+      197:  119:    if (row == "OOO")
+        -:  120:    {
+        1:  121:      o_wins = true;
+        1:  122:      break;
+        -:  123:    }
+      196:  124:    row = "";
+        -:  125:  }
+        -:  126:  
+       68:  127:  if (x_wins)
+        2:  128:    return X;
+       66:  129:  if (o_wins)
+        1:  130:    return O;
+        -:  131:    
+        -:  132:    
+       65:  133:  lastFound = Invalid;
+       65:  134:  row = "";
+       65:  135:  x_wins = false;
+       65:  136:  o_wins = false;  
+        -:  137:  // check for wins in columns
+      254:  138:  for (int i = 0; i < 3; i++)
+        -:  139:  {
+      764:  140:    for(int j = 0; j < 3; j++)
+        -:  141:    {
+      573:  142:      lastFound = this->board[j][i];
+      573:  143:      row += lastFound;
+      573:  144:      if (lastFound == Blank)
+      419:  145:        foundBlanks = true;
+        -:  146:    }
+      191:  147:    if (row == "XXX")
+        -:  148:    {
+        1:  149:      x_wins = true;
+        1:  150:      break;
+        -:  151:    }
+      190:  152:    if (row == "OOO")
+        -:  153:    {
+        1:  154:      o_wins = true;
+        1:  155:      break;
+        -:  156:    }
+      189:  157:    row = "";
+        -:  158:  }
+        -:  159:  
+       65:  160:  if (x_wins)
+        1:  161:    return X;
+       64:  162:  if (o_wins)
+        1:  163:    return O;
+        -:  164:
+        -:  165:  // Check for wins on diagonal
+      126:  166:  std::string diag1 = "";
+      126:  167:  std::string diag2 = "";
+       63:  168:  int opp = 2;
+      252:  169:  for (int i = 0; i < 3; i++)
+        -:  170:  {
+      189:  171:    diag1 += this->board[i][i];
+      189:  172:    diag2 += this->board[i][opp];
+      189:  173:    opp--;
+        -:  174:  }
+       63:  175:  if (diag1 == "XXX" || diag2 == "XXX")
+        -:  176:  {
+        1:  177:    x_wins = true;
+        -:  178:  }
+       63:  179:  if (diag1 == "OOO" || diag2 == "OOO")
+        -:  180:  {
+        1:  181:    o_wins = true;
+        -:  182:  }
+       63:  183:  if (x_wins)
+        1:  184:    return X;
+       62:  185:  if (o_wins)
+        1:  186:    return O;
+        -:  187:    
+       61:  188:  if (foundBlanks)
+        -:  189:  {
+       60:  190:    return Invalid;
+        -:  191:  }
+        -:  192:  
+       69:  193:  return Blank;
+        3:  194:}
