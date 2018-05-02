@@ -17,6 +17,7 @@ before_install:
   - cd ../../../..
 
 script:
+  - ls
   - ./configure --enable-gcov && make && make check
   - make clean
   - make
